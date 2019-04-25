@@ -1,7 +1,7 @@
 //rce
 
 import React, { Component } from "react";
-import * as moment from "moment";
+import Yesterday from "./functions/Yesterday";
 
 class Streak extends Component {
   constructor(props) {
@@ -14,6 +14,10 @@ class Streak extends Component {
     };
   }
   seekUser = () => {
+    //new user, new streak
+    this.setState({
+      streak: 0
+    });
     const user = this.state.user;
     console.log(user);
     //pagination example https://api.github.com/users/${user}/events?page=3
@@ -42,7 +46,7 @@ class Streak extends Component {
   countStreak = () => {
     console.log("Counting streak");
     const today = new Date();
-    let todaysDate =
+    let formattedDate =
       ("0" + today.getFullYear()).slice(-4) +
       "-" +
       ("0" + (today.getMonth() + 1)).slice(-2) +
@@ -56,13 +60,37 @@ class Streak extends Component {
       let evtDate = event.created_at.slice(0, 10);
       let streak = this.state.streak;
       if (lastContributeDate) {
+        //what was day before last contribute
+        let priorDay = Yesterday(lastContributeDate);
+        console.log(
+          "Previous day:",
+          priorDay,
+          "Last Contribute:",
+          lastContributeDate,
+          "This event:",
+          evtDate
+        );
+        if (evtDate === lastContributeDate) {
+          //same day contribution
+          console.log("another contribution, same day");
+        } else if (evtDate === priorDay) {
+          //next day contribution
+          console.log("Additional streak day!");
+          streak += 1;
+          lastContributeDate = priorDay;
+        } else {
+          //Streak broken!
+          console.log("streak broken, you didn't code on", priorDay);
+          //streak = 0;
+          break;
+        }
       } else {
-        console.log(todaysDate, evtDate);
-        if (todaysDate === evtDate) {
+        console.log(formattedDate, evtDate);
+        if (formattedDate === evtDate) {
           //they had activity today!
           console.log("first contribute today");
-          lastContributeDate = today;
-          streak = 1;
+          lastContributeDate = formattedDate;
+          streak += 1;
         }
       }
       this.setState({
@@ -77,6 +105,7 @@ class Streak extends Component {
         return (
           <div key={event.id}>
             <p>{event.repo.name}</p>
+            <p>{event.created_at}</p>
           </div>
         );
       })
