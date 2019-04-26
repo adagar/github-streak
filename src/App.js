@@ -9,6 +9,13 @@ const divStyle = {
   WebkitBorderRadius: "50%"
 };
 function App() {
+  //Testing google cloud function
+  const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/helloWorld`;
+
+  fetch(fetchReq).then((json) => {
+    console.log(json);
+  });
+
   return (
     <div className="App container center-align">
       <div className="app-content" style={divStyle}>

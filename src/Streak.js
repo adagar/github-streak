@@ -13,12 +13,11 @@ class Streak extends Component {
       streak: 0
     };
   }
-  seekUser = () => {
+  seekUser = (user) => {
     //new user, new streak
     this.setState({
       streak: 0
     });
-    const user = this.state.user;
     console.log(user);
     //pagination example https://api.github.com/users/${user}/events?page=3
     const fetchReq = `https://api.github.com/users/${user}/events?page=1`;
@@ -40,7 +39,7 @@ class Streak extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    this.seekUser();
+    this.seekUser(this.state.user);
   };
 
   incrementStreak = () => {
