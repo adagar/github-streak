@@ -113,17 +113,18 @@ class Streak extends Component {
       <div>No events found</div>
     );
     return (
-      <div>
-        {this.state.streak}
-        <form onSubmit={this.handleSubmit}>
-          <label>Look up user:</label>
+      <div className="Streak">
+        <h1>{this.state.streak}</h1>
+        <form onSubmit={this.handleSubmit} className="input-field">
+          <i class="prefix material-icons">person</i>
+          <label className="black-text">Look up user:</label>
           <input
             type="text"
             onChange={this.handleChange}
             value={this.state.content}
           />
         </form>
-        {githubEvents}
+        {/*githubEvents*/}
       </div>
     );
   }
