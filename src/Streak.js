@@ -43,7 +43,17 @@ class Streak extends Component {
     this.seekUser();
   };
 
-  countStreak = () => {
+  incrementStreak = () => {
+    let gap = 100;
+    let streak = this.state.streak;
+    streak += 1;
+    this.setState({
+      streak: streak
+    });
+    return new Promise((resolve) => setTimeout(resolve, gap));
+  };
+
+  countStreak = async () => {
     console.log("Counting streak");
     const today = new Date();
     let formattedDate =
@@ -76,8 +86,8 @@ class Streak extends Component {
         } else if (evtDate === priorDay) {
           //next day contribution
           console.log("Additional streak day!");
-          streak += 1;
           lastContributeDate = priorDay;
+          await this.incrementStreak();
         } else {
           //Streak broken!
           console.log("streak broken, you didn't code on", priorDay);
@@ -90,12 +100,9 @@ class Streak extends Component {
           //they had activity today!
           console.log("first contribute today");
           lastContributeDate = formattedDate;
-          streak += 1;
+          await this.incrementStreak();
         }
       }
-      this.setState({
-        streak: streak
-      });
     }
   };
 
@@ -116,7 +123,7 @@ class Streak extends Component {
       <div className="Streak">
         <h1>{this.state.streak}</h1>
         <form onSubmit={this.handleSubmit} className="input-field">
-          <i class="prefix material-icons">person</i>
+          <i className="prefix material-icons">person</i>
           <label className="black-text">Look up user:</label>
           <input
             type="text"
