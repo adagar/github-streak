@@ -20,7 +20,8 @@ class Streak extends Component {
     });
     console.log(user);
     //pagination example https://api.github.com/users/${user}/events?page=3
-    const fetchReq = `https://api.github.com/users/${user}/events?page=1`;
+    //const fetchReq = `https://api.github.com/users/${user}/events?page=1`;
+    const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/seekUser?user=${user}`;
 
     fetch(fetchReq)
       .then((res) => res.json())
@@ -67,7 +68,7 @@ class Streak extends Component {
     for (let i = 0; i < userContributions.length; i++) {
       let event = userContributions[i];
       let evtDate = event.created_at.slice(0, 10);
-      let streak = this.state.streak;
+
       if (lastContributeDate) {
         //what was day before last contribute
         let priorDay = Yesterday(lastContributeDate);

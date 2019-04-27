@@ -19,23 +19,25 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   });
 });
 
-const seekUserFn = (request, response) => {
+const seekUserFn = (request, response, user) => {
   //pagination example https://api.github.com/users/${user}/events?page=3
-  const url = `https://api.github.com/users/adagar/events?page=1`;
+  const url = `https://api.github.com/users/${user}/events?page=1`;
+  response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   const xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
   xhr.send();
+  console.log(request);
   xhr.onload = () => {
     let contributions = JSON.parse(xhr.responseText);
     if (xhr.status === 200) {
       console.log(contributions);
-      return contributions;
+      response.status(200).send(contributions);
+      //return contributions;
     } else {
       console.error(xhr.status);
       return xhr.status;
     }
   };
-
   /*
   fetch(fetchReq)
     .then((res) => res.json())
@@ -48,8 +50,10 @@ const seekUserFn = (request, response) => {
 };
 
 exports.seekUser = functions.https.onRequest((request, response) => {
+  const user = request.query.user;
+  console.log(user);
   const corsFn = cors;
   return corsFn(request, response, () => {
-    seekUserFn(request, response);
+    return seekUserFn(request, response, user);
   });
 });
