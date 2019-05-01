@@ -19,14 +19,14 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   });
 });
 
-const seekUserFn = (request, response, user) => {
+const seekUserFn = (request, response, user, page) => {
   //pagination example https://api.github.com/users/${user}/events?page=3
-  const url = `https://api.github.com/users/${user}/events?page=1`;
+  const url = `https://api.github.com/users/${user}/events?page=${page}`;
   response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   const xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
   xhr.send();
-  console.log(request);
+  console.log(url);
   xhr.onload = () => {
     let contributions = JSON.parse(xhr.responseText);
     if (xhr.status === 200) {
@@ -51,9 +51,10 @@ const seekUserFn = (request, response, user) => {
 
 exports.seekUser = functions.https.onRequest((request, response) => {
   const user = request.query.user;
+  const page = request.query.page;
   console.log(user);
   const corsFn = cors;
   return corsFn(request, response, () => {
-    return seekUserFn(request, response, user);
+    return seekUserFn(request, response, user, page);
   });
 });

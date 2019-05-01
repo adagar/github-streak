@@ -10,18 +10,21 @@ class Streak extends Component {
     this.state = {
       user: "adagar",
       contributions: [],
-      streak: 0
+      streak: 0,
+      page: 1
     };
   }
-  seekUser = (user) => {
+  seekUser = (user, page) => {
     //new user, new streak
-    this.setState({
-      streak: 0
-    });
+    if (this.state.page === 1) {
+      this.setState({
+        streak: 0
+      });
+    }
     console.log(user);
     //pagination example https://api.github.com/users/${user}/events?page=3
     //const fetchReq = `https://api.github.com/users/${user}/events?page=1`;
-    const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/seekUser?user=${user}`;
+    const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/seekUser?user=${user}&page=${page}`;
 
     fetch(fetchReq)
       .then((res) => res.json())
@@ -40,7 +43,7 @@ class Streak extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    this.seekUser(this.state.user);
+    this.seekUser(this.state.user, this.state.page);
   };
 
   incrementStreak = () => {
@@ -102,6 +105,13 @@ class Streak extends Component {
           lastContributeDate = formattedDate;
           await this.incrementStreak();
         }
+      }
+      //check if we're out of contributions, but they're still streaking
+      if (i === userContributions.length - 1) {
+        this.setState({
+          page: this.state.page + 1
+        });
+        this.seekUser(this.state.user, this.state.page);
       }
     }
   };
