@@ -21,8 +21,12 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 
 const seekUserFn = (request, response, user, page) => {
   //pagination example https://api.github.com/users/${user}/events?page=3
+  const allowedOrigins = ["http://localhost:3000", "http://githubstreak.com"];
+  const origin = request.header.origin;
+  if (allowedOrigins.indexOf(origin) > -1) {
+    response.setHeader("Access-Control-Allow-Origin", origin);
+  }
   const url = `https://api.github.com/users/${user}/events?page=${page}`;
-  response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   const xhr = new XMLHttpRequest();
   xhr.open("GET", url, true);
   xhr.send();

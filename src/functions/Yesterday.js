@@ -2,9 +2,9 @@ const Yesterday = (today) => {
   let day = "0" + today.slice(-2);
   let month = today.slice(5, 7);
   let year = today.slice(0, 4);
-  day--;
+  day = ("0" + (day - 1)).slice(-2);
   if (day < 1) {
-    month = "0" + (month - 1);
+    month = ("0" + (month - 1)).slice(-2);
     if (month < 1) {
       year--;
       month = 12;
