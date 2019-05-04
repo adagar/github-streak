@@ -27,21 +27,26 @@ class Streak extends Component {
     const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/seekUser?user=${user}&page=${page}`;
 
     fetch(fetchReq)
-      .then((res) => res.json())
-      .then((json) => {
-        console.log(json);
-        this.setState({ contributions: json });
+      .then(res => res.json())
+      .then(json => {
+        console.log("Looking at page", page);
+        //this.setState({ contributions: json });
+        this.setState((state, props) => {
+          return {
+            contributions: [...this.state.contributions, ...json]
+          };
+        });
         this.countStreak();
       });
   };
 
-  handleChange = (e) => {
+  handleChange = e => {
     this.setState({
       user: e.target.value
     });
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = e => {
     e.preventDefault();
     this.seekUser(this.state.user, this.state.page);
   };
@@ -53,7 +58,7 @@ class Streak extends Component {
     this.setState({
       streak: streak
     });
-    return new Promise((resolve) => setTimeout(resolve, gap));
+    return new Promise(resolve => setTimeout(resolve, gap));
   };
 
   countStreak = async () => {
@@ -98,7 +103,7 @@ class Streak extends Component {
           break;
         }
       } else {
-        console.log(formattedDate, evtDate);
+        //console.log(formattedDate, evtDate);
         if (formattedDate === evtDate) {
           //they had activity today!
           console.log("first contribute today");
@@ -118,7 +123,7 @@ class Streak extends Component {
 
   render() {
     const githubEvents = this.state.contributions.length ? (
-      this.state.contributions.map((event) => {
+      this.state.contributions.map(event => {
         return (
           <div key={event.id}>
             <p>{event.repo.name}</p>
