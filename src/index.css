@@ -30,6 +30,13 @@ h1 {
     color: #002E00;
 }
 
+.vertical-center {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 35%
+}
+
 /*
 div>h1 {
     opacity: 1.0;

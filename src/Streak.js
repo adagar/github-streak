@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import Yesterday from "./functions/Yesterday";
+import StatusIcon from "./StatusIcon";
 
 class Streak extends Component {
   constructor(props) {
@@ -11,10 +12,39 @@ class Streak extends Component {
       user: "adagar",
       contributions: [],
       streak: 0,
-      page: 1
+      page: 1,
+      status: "init"
     };
   }
-  seekUser = (user, page) => {
+
+  fetchNow = async () => {
+    let user = this.state.user;
+    let page = this.state.page;
+    const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/seekUser?user=${user}&page=${page}`;
+    await fetch(fetchReq)
+      .then((res) => res.json())
+      .then(async (json) => {
+        console.log("Looking at page", page);
+        //this.setState({ contributions: json });
+        this.setState((state, props) => {
+          return {
+            contributions: [...this.state.contributions, ...json]
+          };
+        });
+        console.log(json);
+        if (json.length !== 0) {
+          this.setState({
+            page: this.state.page + 1
+          });
+          await this.fetchNow();
+        } else {
+          console.log("Scan complete!");
+          return;
+        }
+      });
+  };
+
+  seekUser = async (user, page) => {
     //new user, new streak
     if (this.state.page === 1) {
       this.setState({
@@ -24,29 +54,21 @@ class Streak extends Component {
     console.log(user);
     //pagination example https://api.github.com/users/${user}/events?page=3
     //const fetchReq = `https://api.github.com/users/${user}/events?page=1`;
-    const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/seekUser?user=${user}&page=${page}`;
 
-    fetch(fetchReq)
-      .then(res => res.json())
-      .then(json => {
-        console.log("Looking at page", page);
-        //this.setState({ contributions: json });
-        this.setState((state, props) => {
-          return {
-            contributions: [...this.state.contributions, ...json]
-          };
-        });
-        this.countStreak();
-      });
+    this.state.status = "loading";
+    await this.fetchNow(user, page);
+    this.state.status = "loaded";
+    console.log("Fetch complete, counting streak");
+    this.countStreak();
   };
 
-  handleChange = e => {
+  handleChange = (e) => {
     this.setState({
       user: e.target.value
     });
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     e.preventDefault();
     this.seekUser(this.state.user, this.state.page);
   };
@@ -58,7 +80,7 @@ class Streak extends Component {
     this.setState({
       streak: streak
     });
-    return new Promise(resolve => setTimeout(resolve, gap));
+    return new Promise((resolve) => setTimeout(resolve, gap));
   };
 
   countStreak = async () => {
@@ -72,7 +94,7 @@ class Streak extends Component {
       ("0" + today.getDate()).slice(-2);
     let lastContributeDate = null;
     let userContributions = this.state.contributions;
-    console.log(this.state.contributions);
+    //console.log(this.state.contributions);
     for (let i = 0; i < userContributions.length; i++) {
       let event = userContributions[i];
       let evtDate = event.created_at.slice(0, 10);
@@ -111,19 +133,19 @@ class Streak extends Component {
           await this.incrementStreak();
         }
       }
-      //check if we're out of contributions, but they're still streaking
-      if (i === userContributions.length - 1) {
-        this.setState({
-          page: this.state.page + 1
-        });
-        this.seekUser(this.state.user, this.state.page);
-      }
+      // //check if we're out of contributions, but they're still streaking
+      // if (i === userContributions.length - 1) {
+      //   this.setState({
+      //     page: this.state.page + 1
+      //   });
+      //   this.seekUser(this.state.user, this.state.page);
+      // }
     }
   };
 
   render() {
     const githubEvents = this.state.contributions.length ? (
-      this.state.contributions.map(event => {
+      this.state.contributions.map((event) => {
         return (
           <div key={event.id}>
             <p>{event.repo.name}</p>
@@ -134,10 +156,37 @@ class Streak extends Component {
     ) : (
       <div>No events found</div>
     );
+
+    let status;
+    if (this.state.status === "init") {
+      status = <h3>Welcome!</h3>;
+    } else if (this.state.status === "loading") {
+      status = (
+        <div className="preloader-wrapper active">
+          <div className="spinner-layer spinner-red-only">
+            <div className="circle-clipper left">
+              <div className="circle" />
+            </div>
+            <div className="gap-patch">
+              <div className="circle" />
+            </div>
+            <div className="circle-clipper right">
+              <div className="circle" />
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      status = <h3>{this.state.streak}</h3>;
+    }
+
     return (
       <div className="Streak">
-        <h1>{this.state.streak}</h1>
-        <form onSubmit={this.handleSubmit} className="input-field">
+        {status}
+        <form
+          onSubmit={this.handleSubmit}
+          className="input-field vertical-center"
+        >
           <i className="prefix material-icons">person</i>
           <label className="black-text">Look up user:</label>
           <input
