@@ -1,40 +1,38 @@
 body {
-    background: #ebedf0;
-    /*other github colors: #c6e48b, #7bc96f, #239a3b, #196127 */
-
+  background: #ebedf0;
+  /*other github colors: #c6e48b, #7bc96f, #239a3b, #196127 */
 }
 
 .App {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    background-image: url('./media/github-logo.svg');
-    height: 600px;
-
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-image: url("./media/github-logo.svg");
+  height: 600px;
 }
 
 .app-content {
-    margin: auto;
-    padding: 30px 0;
-    background: #ebedf080;
-    height: 625px;
-    width: 625px;
+  margin: auto;
+  padding: 30px 0;
+  background: #ebedf080;
+  height: 625px;
+  width: 625px;
 }
 
 div.Streak {
-    width: 60%;
-    margin: auto;
+  width: 60%;
+  margin: auto;
 }
 
 h1 {
-    color: #002E00;
+  color: #002e00;
 }
 
 .vertical-center {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 35%
+  position: relative;
+  top: 70px;
+  transform: translateY(-50px);
+  width: 300px;
 }
 
 /*

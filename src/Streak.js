@@ -2,7 +2,6 @@
 
 import React, { Component } from "react";
 import Yesterday from "./functions/Yesterday";
-import StatusIcon from "./StatusIcon";
 
 class Streak extends Component {
   constructor(props) {
@@ -83,6 +82,14 @@ class Streak extends Component {
     return new Promise((resolve) => setTimeout(resolve, gap));
   };
 
+  updateRing = () => {
+    const gitClrs = ["#ebedf0", "#c6e48b", "#7bc96f", "#239a3b", "#196127"];
+
+    if (this.state.streak > 1) {
+      //console.log(this.props.ref);
+    }
+  };
+
   countStreak = async () => {
     console.log("Counting streak");
     const today = new Date();
@@ -98,6 +105,8 @@ class Streak extends Component {
     for (let i = 0; i < userContributions.length; i++) {
       let event = userContributions[i];
       let evtDate = event.created_at.slice(0, 10);
+
+      this.updateRing();
 
       if (lastContributeDate) {
         //what was day before last contribute

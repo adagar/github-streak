@@ -8,6 +8,7 @@ const divStyle = {
   MozBorderRadius: "50%",
   WebkitBorderRadius: "50%"
 };
+
 function App() {
   //Testing google cloud function
   const fetchReq = `https://us-central1-github-streak-d7ba0.cloudfunctions.net/helloWorld`;
@@ -16,11 +17,13 @@ function App() {
     console.log(json);
   });
 
+  let appContainer = React.createRef();
+
   return (
     <div className="App container center-align">
       <div className="app-content" style={divStyle}>
         <h1>Github Streak</h1>
-        <Streak />
+        <Streak ref="app-container" />
       </div>
     </div>
   );
